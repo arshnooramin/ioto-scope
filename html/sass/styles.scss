@@ -1,0 +1,8 @@
+@charset "utf-8";
+
+$tabs-boxed-link-hover-background-color: hsl(171, 100%, 29%);
+$tabs-boxed-link-active-border-color: #fff;
+$tabs-boxed-link-active-background-color: hsl(171, 100%, 41%);
+$tabs-border-bottom-color: #fff;
+
+@import "../node_modules/bulma/bulma.sass";

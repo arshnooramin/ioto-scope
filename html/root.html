@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+		<!--
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+		<meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+		-->
+		<link rel="stylesheet" type="text/css" href="bulma.css" />
+		<link rel="stylesheet" type="text/css" href="main.css" />
+		<script src="plotly-2.9.0.min.js"></script>
+		<title>Web Controller | ESP32 GPIO</title>
+	</head>
+	<body>
+		<div id="modal-js" class="modal">
+			<div class="modal-background"></div>
+			<div class="modal-card">
+			  <header class="modal-card-head">
+				<p id="modal-title" class="modal-card-title"></p>
+				<button onclick="closeModal()" class="delete" aria-label="close"></button>
+			  </header>
+			  <section class="modal-card-body">
+				<div class="columns">
+					<div class="column is-2"><p class="title is-5 has-text-justified has-text-centered">Mode:</p> </div>
+					<div class="column control">
+						<label class="radio">
+						  <input type="radio" name="mode">
+						  None
+						</label>
+						<label class="radio">
+						  <input type="radio" name="mode">
+						  Output
+						</label>
+						<label class="radio">
+							<input type="radio" name="mode">
+							Input
+						</label>
+					</div>
+				</div>
+				<div class="columns">
+					<div class="column is-2"><p class="title is-5 has-text-justified has-text-centered">Level:</p> </div>
+					<div class="column control">
+						<label class="radio">
+							<input type="radio" name="level" value="None">
+							None
+						</label>
+						<label class="radio">
+						  <input type="radio" name="level" value="HIGH">
+						  High
+						</label>
+						<label class="radio">
+						  <input type="radio" name="level" value="LOW">
+						  Low
+						</label>
+					  </div>
+				</div>
+			  </section>
+			  <footer class="modal-card-foot">
+				<button onclick="update()" class="button is-success">Update</button>
+				<button onclick="closeModal()" class="button">Cancel</button>
+			  </footer>
+			</div>
+		</div>
+		<div class="container mt-6">
+			<div class="tile is-ancestor">
+				<!-- <div class="tile is-2 is-vertical is-parent">
+				  <div class="tile is-child notification is-primary">
+					<p class="title">Status</p>
+					<p id="status"><button class="button is-small is-primary is-loading"></button>Connecting</p>
+				  </div>
+				  <div class="tile is-child notification is-danger">
+					<p class="title">Errors</p>
+					<p>No Errors!</p>
+				  </div>
+				</div> -->
+				<div class="tile is-horizontal is-parent">
+					<div class="tile has-background-info is-child panel is-info">
+						<p class="panel-heading">Controller</p>
+						<div class="notification has-background-dark">
+							<div id="pins1" class="block columns">
+								<div id="GND_pin" class="column">
+									<span id="GND_span" class="mb-1 is-rounded is-danger is-flex tag">LOW</span>
+									<button onclick="openModal()" id="GND" class="button is-black is-fullwidth" disabled>GND</button>
+								</div>
+								<div id="RST_pin" class="column">
+									<span id="RST_span" class="mb-1 is-rounded is-black is-flex tag">None</span>
+									<button onclick="openModal()" id="RST" class="button is-black is-fullwidth" disabled>RST</button>
+								</div>
+								<div id="GPIO42_pin" class="column">
+									<span id="GPIO42_span" class="mb-1 is-rounded is-black is-flex tag">None</span>
+									<button onclick="openModal()" id="GPIO42" class="button is-black is-fullwidth">GPIO42</button>
+								</div>
+								<div id="GPIO41_pin" class="column">
+									<span id="GPIO41_span" class="mb-1 is-rounded is-black is-flex tag">None</span>
+									<button onclick="openModal()" id="GPIO41" class="button is-black is-fullwidth">GPIO41</button>
+								</div>
+								<div id="RX_pin" class="column">
+									<span id="RX_span" class="mb-1 is-rounded is-black is-flex tag">None</span>
+									<button onclick="openModal()" id="RX" class="button is-black is-fullwidth" disabled>RX</button>
+								</div>
+								<div id="TX_pin" class="column">
+									<span id="TX_span" class="mb-1 is-rounded is-black is-flex tag">None</span>
+									<button onclick="openModal()" id="TX" class="button is-black is-fullwidth" disabled>TX</button>
+								</div>
+							</div>
+							<div class="block tile has-text-white is-4 has-background-grey notification is-light">
+								<div class=""><h1 class="mb-1 title is-4">ESPRESSIF<h1><h1 class="mb-2 title is-6">ESP32-S2<h1></h1></div>
+							</div>
+							<div id="pins2" class="block columns">
+								<div id="3V3_pin" class="column">
+									<button onclick="openModal()" id="3V3" class="button is-black is-fullwidth" disabled>3V3</button>
+									<span id="3V3_span" class="mt-1 is-rounded is-success is-flex tag">HIGH</span>
+								</div>
+								<div id="GPIO1_pin" class="column">
+									<button onclick="openModal()" id="GPIO1" class="button is-black is-fullwidth">GPIO1</button>
+									<span id="GPIO1_span" class="mt-1 is-rounded is-black is-flex tag">None</span>
+								</div>
+								<div id="GPIO2_pin" class="column">
+									<button onclick="openModal()" id="GPIO2" class="button is-black is-fullwidth">GPIO2</button>
+									<span id="GPIO2_span" class="mt-1 is-rounded is-black is-flex tag">None</span>
+								</div>
+								<div id="GPIO3_pin" class="column">
+									<button onclick="openModal()" id="GPIO3" class="button is-black is-fullwidth">GPIO3</button>
+									<span id="GPIO3_span" class="mt-1 is-rounded is-black is-flex tag">None</span>
+								</div>
+								<div id="GPIO4_pin" class="column">
+									<button onclick="openModal()" id="GPIO4" class="button is-black is-fullwidth">GPIO4</button>
+									<span id="GPIO4_span" class="mt-1 is-rounded is-black is-flex tag">None</span>
+								</div>
+								<div id="GPIO5_pin" class="column">
+									<button onclick="openModal()" id="GPIO5" class="button is-black is-fullwidth">GPIO5</button>
+									<span id="GPIO5_span" class="mt-1 is-rounded is-black is-flex tag">None</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tile is-horizontal is-parent">
+					<div class="tile has-background-primary is-child panel is-primary">
+						<p class="panel-heading">Analog</p>
+						<div class="has-background-primary is-small mt-1 mx-2 tabs is-boxed">
+							<ul>
+							  <li class="is-active">
+								<a>
+								  <span class="has-text-white">GPIO42</span>
+								</a>
+							  </li>
+							  <li>
+								<a>
+								  <span class="has-text-white">GPIO41</span>
+								</a>
+							  </li>
+							</ul>
+						  </div>
+						<div class="panel-block has-background-primary my-2" id="tester" style="width:100%;height:250px;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="footer mt-6">
+			<div class="content has-text-centered">
+			  <p><strong>ESP32 GPIO Web Controller</strong> by <a href="https://arshnooramin.github.io/">Arsh Noor Amin</a>.</p>
+			</div>
+		  </footer>
+		<script type="text/javascript" src="main.js"></script>
+	</body>
+</html>
