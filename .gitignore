@@ -1,6 +1,8 @@
 # Visual Studio Code Files
 .vscode/
 
+# config files
 sdkconfig*
 
+# partition file
 partitions.csv
