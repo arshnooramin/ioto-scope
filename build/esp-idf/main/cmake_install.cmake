@@ -1,4 +1,4 @@
-# Install script for directory: C:/internetofthings/web_controller/main
+# Install script for directory: C:/ioto/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -1,8 +1,8 @@
 {
     "project_name":       "bootloader",
     "project_path":       "C:/esp-idf/components/bootloader/subproject",
-    "build_dir":          "C:/internetofthings/web_controller/build/bootloader",
-    "config_file":        "C:/internetofthings/web_controller/sdkconfig",
+    "build_dir":          "C:/ioto/build/bootloader",
+    "config_file":        "C:/ioto/sdkconfig",
     "config_defaults":    "",
     "app_elf":            "bootloader.elf",
     "app_bin":            "bootloader.bin",

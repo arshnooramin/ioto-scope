@@ -1,4 +1,4 @@
-/* * Data converted from C:/internetofthings/web_controller/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from C:/ioto/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

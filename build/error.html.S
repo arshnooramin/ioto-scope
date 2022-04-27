@@ -1,4 +1,4 @@
-/* * Data converted from C:/internetofthings/web_controller/html/error.html
+/* * Data converted from C:/ioto/html/error.html
  */
 .data
 .section .rodata.embedded

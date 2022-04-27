@@ -1560,7 +1560,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_main
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = "C:\Users\Arsh Noor Amin\.espressif\tools\cmake\3.16.4\bin\cmake.exe" -SC:\internetofthings\web_controller -BC:\internetofthings\web_controller\build
+  command = "C:\Users\Arsh Noor Amin\.espressif\tools\cmake\3.16.4\bin\cmake.exe" -SC:\ioto -BC:\ioto\build
   description = Re-running CMake...
   generator = 1
 

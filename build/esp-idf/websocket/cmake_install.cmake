@@ -1,4 +1,4 @@
-# Install script for directory: C:/internetofthings/web_controller/components/websocket
+# Install script for directory: C:/ioto/components/websocket
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

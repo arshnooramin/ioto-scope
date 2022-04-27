@@ -9,24 +9,26 @@ var selected = ""
 // 	websocket.send("O");
 // }
 
-function rand() {
-	return Math.random();
-}
-  
+var arrayLength = 30
+var dataArray = []
+
+var curr = 0;
 var cnt = 0;
 
 TESTER = document.getElementById('tester');
 Plotly.newPlot( TESTER, [{
-y: [1, 2, 3].map(rand), mode: 'lines',}],  {
-	paper_bgcolor: 'rgba(0,0,0,0)',
-	plot_bgcolor:'rgba(0,0,0,0)',
+	y: dataArray, mode: 'lines',}],  {
+	paper_bgcolor: 'hsl(0, 0%, 21%)',
+	plot_bgcolor:'hsl(0, 0%, 21%)',
 	margin: { t: 0, b:20, r:0, l:20 },
 	xaxis: {
+	  range: [0, arrayLength],
 	  zeroline: false,
 	//   showline: true,
 	  color: '#fff',
 	},
 	yaxis: {
+	  range: [-2.5, 3],
 	  zeroline: false,
 	//   showline: true,
 	  color: '#fff',
@@ -58,12 +60,13 @@ var getInput = setInterval(function() {
 			}
 		}
 	}
-	Plotly.extendTraces(TESTER, {
-		y: [[rand()]]
-	  }, [0])
+	websocket.send('A GPIO2')
+	// Plotly.extendTraces(TESTER, {
+	// 	y: [[rand()]]
+	//   }, [0])
 	
 	if(++cnt === 100) clearInterval(interval);
-  }, 300);
+  }, 100);
 
 function openModal() {
 	document.getElementById('modal-title').innerHTML = "Setting " + event.target.id;
@@ -185,7 +188,9 @@ websocket.onopen = function(evt) {
 	json_data = JSON.stringify(data);
 	console.log('json_data=' + json_data);
 	websocket.send(json_data);
-	document.getElementById("status").innerHTML = "Connected.";
+	document.getElementById("status").innerHTML = "Connected";
+	document.getElementById("status").classList.add("is-success");
+	document.getElementById("status").classList.remove("is-danger");
 }
 
 websocket.onmessage = function(evt) {
@@ -222,6 +227,25 @@ websocket.onmessage = function(evt) {
 				document.getElementById(values[1] + "_span").classList.remove("is-success", "is-danger");
 				document.getElementById(values[1] + "_span").classList.add("is-black");
 			}
+			break;
+		case 'AN':
+			dataArray = dataArray.concat(parseInt(values[2])/1000)
+			if (curr == arrayLength) {
+				dataArray.splice(0, 1)
+			}
+			else {
+				curr++;
+			}
+		  
+			var data_update = {
+			  y: [dataArray]
+			};
+		  
+			Plotly.update(TESTER, data_update)
+			// Plotly.extendTraces(TESTER, {
+			// 	y: [[parseInt(values[2])/1000]]
+			//   }, [0])
+			break;
 				
 /*
 		case 'NAME':
@@ -240,12 +264,16 @@ websocket.onmessage = function(evt) {
 
 websocket.onclose = function(evt) {
 	console.log('Websocket connection closed');
-	document.getElementById("status").innerHTML = "Disconnected.";
+	document.getElementById("status").innerHTML = "Disconnected";
+	document.getElementById("status").classList.add("is-danger");
+	document.getElementById("status").classList.remove("is-success");
 	//document.getElementById("datetime").innerHTML = "WebSocket closed";
 }
 
 websocket.onerror = function(evt) {
 	console.log('Websocket error: ' + evt);
-	document.getElementById("status").innerHTML = "Disconnected.";
+	document.getElementById("status").innerHTML = "Disconnected";
+	document.getElementById("status").classList.add("is-danger");
+	document.getElementById("status").classList.remove("is-success");
 	//document.getElementById("datetime").innerHTML = "WebSocket error????!!!1!!";
 }

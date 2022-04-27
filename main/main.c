@@ -27,6 +27,7 @@
 #include "lwip/dns.h"
 
 #include "websocket_server.h"
+#include "esp_adc_cal.h"
 
 #include "mqtt.h"
 
@@ -39,7 +40,7 @@ MessageBufferHandle_t xMessageBufferMqtt;
 
 static esp_adc_cal_characteristics_t *adc_chars;
 static const adc_channel_t channel = ADC_CHANNEL_6;     //GPIO34 if ADC1, GPIO14 if ADC2
-static const adc_bits_width_t width = ADC_WIDTH_BIT_12;
+static const adc_bits_width_t width = ADC_WIDTH_BIT_13;
 static const adc_atten_t atten = ADC_ATTEN_DB_11;
 static const adc_unit_t unit = ADC_UNIT_1;
 
@@ -301,15 +302,40 @@ void websocket_callback(uint8_t num,WEBSOCKET_TYPE_t type,char* msg,uint64_t len
 							ESP_LOGI(TAG, "setting GPIO%i as input", gpio_pin);
 							gpio_reset_pin(gpio_pin);
 							/* Set the GPIO as a push/pull output */
-							// gpio_set_direction(gpio_pin, GPIO_MODE_INPUT);
-							// reading = gpio_get_level(gpio_pin);
-							// ESP_LOGI(TAG, "GPIO%i value %i", gpio_pin, reading);
-							adc1_config_width(width);
-        					adc1_config_channel_atten(gpio_pin, atten);
+							gpio_set_direction(gpio_pin, GPIO_MODE_INPUT);
+							reading = gpio_get_level(gpio_pin);
+							ESP_LOGI(TAG, "GPIO%i value %i", gpio_pin, reading);
+							// adc1_config_width(width);
+        					// adc1_config_channel_atten(gpio_pin, atten);
 						}
 						break;
 					case 'G':
 						if (sscanf(msg, "G GPIO%i_pin", &gpio_pin)) {
+							time_t now;
+							time(&now);
+							now = now + (CONFIG_LOCAL_TIMEZONE*60*60);
+							struct tm timeinfo;
+							char strftime_buf[64];
+							localtime_r(&now, &timeinfo);
+							//strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+							strftime(strftime_buf, sizeof(strftime_buf), "%H:%M:%S", &timeinfo);
+							ESP_LOGD(TAG, "The current time is: %s", strftime_buf);
+							reading = gpio_get_level(gpio_pin);
+							ESP_LOGI(TAG, "CURRENT: GPIO%i value %i", gpio_pin, reading);
+
+							char out[64];
+							char gpio_num[6];
+							char read_str[6];
+							sprintf(gpio_num, "GPIO%i", gpio_pin);
+							sprintf(read_str, "%i", reading);
+							int len = makeSendText(out, "IN", gpio_num, read_str, strftime_buf);
+							ws_server_send_text_all_from_callback(out,len);
+						}
+						break;
+					case 'A':
+						if (sscanf(msg, "A GPIO%i_pin", &gpio_pin)) {
+							adc1_config_width(width);
+        					adc1_config_channel_atten(channel, atten);
 							
 							adc_chars = calloc(1, sizeof(esp_adc_cal_characteristics_t));
 							esp_adc_cal_value_t val_type = esp_adc_cal_characterize(unit, atten, width, DEFAULT_VREF, adc_chars);
@@ -332,15 +358,14 @@ void websocket_callback(uint8_t num,WEBSOCKET_TYPE_t type,char* msg,uint64_t len
 							//strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
 							strftime(strftime_buf, sizeof(strftime_buf), "%H:%M:%S", &timeinfo);
 							ESP_LOGD(TAG, "The current time is: %s", strftime_buf);
-							reading = gpio_get_level(gpio_pin);
-							ESP_LOGI(TAG, "CURRENT: GPIO%i value %i", gpio_pin, reading);
+							ESP_LOGI(TAG, "CURRENT: ADC%i value %zu", gpio_pin, voltage);
 
 							char out[64];
 							char gpio_num[6];
 							char read_str[6];
 							sprintf(gpio_num, "GPIO%i", gpio_pin);
-							sprintf(read_str, "%i", reading);
-							int len = makeSendText(out, "IN", gpio_num, read_str, strftime_buf);
+							sprintf(read_str, "%zu", voltage);
+							int len = makeSendText(out, "AN", gpio_num, read_str, strftime_buf);
 							ws_server_send_text_all_from_callback(out,len);
 						}
 						break;
