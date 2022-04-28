@@ -26,5 +26,25 @@ ioto contains 2 analog channels (which can also be easily expanded). The analog 
 * Measurable analog input voltage range - 0 mV ~ 2500 mV (at 11 dB attenutation)
 * Digital channels - 6 (expandable to 34 for ESP32-S2 dev board)
 
-## Installation and Usage
+## How to Use
+### Hardware Required
+* ESP32-S2 development board (or any other development board with the ESP32 SoC)
+
+### Connections
+| ESP32-S2                    | ioto        |
+| --------------------------- | ----------- |
+| GPIO42                      | D1          |
+| GPIO41                      | D2          |
+| ..                          | ..          |
+| GPIO37                      | D6          |
+| GPIO7 (ADC1_6)              | Channel 1   |
+| GPIO6 (ADC1_5)              | Channel 2   |
+
+NOTE: The above connections can be modified
+
+### Get and Configure the Project
+Clone this repository
+```
+git clone 
+```
 
