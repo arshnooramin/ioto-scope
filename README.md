@@ -42,9 +42,39 @@ ioto contains 2 analog channels (which can also be easily expanded). The analog 
 
 NOTE: The above connections can be modified
 
-### Get and Configure the Project
+### Running the Code
 Clone this repository
 ```
-git clone 
+git clone git@github.com:arshnooramin/ioto.git
+cd ioto
 ```
+Add Wi-Fi credentials to config file (menuconfig > "Application Configuration")
+```
+idf.py menuconfig
+```
+Compile and flash to the ESP32 development board
+```
+idf.py build
+idf.py -p [PORT] flash monitor
+```
+
+### Example Output
+If everything worked as expected you should get the following output
+```
+I (2440) esp_netif_handlers: sta ip: [Web App IP], mask: [..], gw: [..]
+I (2440) main: got ip:134.82.156.239
+I (2440) main: connected to ap SSID:[WiFi Name] password:[WiFi Password]
+```
+You can now navigate to the IP Address being display to access the ioto Web Application.
+
+## How It Works
+At the center of the ioto project are WebSockets. WebSockets are used here to allow for a two-way communication between the browser and the ESP32.
+
+![Screenshot 2022-04-28 120116](https://user-images.githubusercontent.com/38775985/165795105-56ed0f16-4631-44c2-9c65-ba05b78a1dd4.png)
+
+The ioto project has two main components: the web application and the ESP-IDF program. The web application is built using **HTML/CSS** and **JavaScript**. HTML/CSS defines the structure of the website and how it looks. JavaScript includes WebSocket code so that the user interactions recorded on the web application via DOM events can be sent back to the ESP32. The ESP32 then performs the function that the user requsted and sends information back to the web application/browser where it is displayed to the user.
+
+It is important to note that the HTML, CSS, and JavaScript files are actually served by the ESP32 itself, the ESP32 here acts as an access point. Whenever a stream of data is to be requested from the ESP32, a separate websocket is opened to which the ESP32 streams data and JavaScripts listens for this data and plots it using [Plot.ly](https://plotly.com/javascript/).
+
+![Screenshot 2022-04-28 120825](https://user-images.githubusercontent.com/38775985/165796568-325a095d-f666-4ea4-bd51-6b7b15d69ae8.png)
 
