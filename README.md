@@ -15,6 +15,16 @@ The most important feature of ioto is its custom web application which can be ac
 ![Screenshot 2022-04-28 100854](https://user-images.githubusercontent.com/38775985/165778796-3ffd0167-54e7-45f9-b518-7800993c0cb6.png)
 
 ### Digital IO
-ioto contains 6 digital channels (which can be easily expanded). The digital channels can set as input or output and can read or set logic `HIGH (1)` or `LOW (0)` on each of the channels independently. The state and value of each of the digital channels can be set using the web application.
+ioto contains 6 digital channels (which can be easily expanded). The digital channels can set as input or output and can read or set logic `HIGH (1)` or `LOW (0)` on each of the channels independently. The state and value of each of the digital channels can be set using the web application. The digital IO functionality can support a multitude of applications from basic button/interrupt handling and LED control to complex combinational logics and circuits.
 
-![Screenshot 2022-04-28 105034](https://user-images.githubusercontent.com/38775985/165780461-d28e2bfd-cf90-41f2-8231-395c5180b510.png)
+### Analog Scoping
+ioto contains 2 analog channels (which can also be easily expanded). The analog scope can read analog voltages in the range of 0-2.5V. Each channel independently reads the voltage and plots it on a graph on the web application. The plot layout and sampling frequency can be modified and graphs can be exported as images. The analog scoping functionality can be used in a multitude applications as well from sensor data recording to circuit debugging.
+
+## Technical Specifications
+* Analog channels - 2 (expandable to 18 for ESP32-S2 dev board)
+* Analog-to-digital conversion (ADC) resolution - 12 bits
+* Measurable analog input voltage range - 0 mV ~ 2500 mV (at 11 dB attenutation)
+* Digital channels - 6 (expandable to 34 for ESP32-S2 dev board)
+
+## Installation and Usage
+
